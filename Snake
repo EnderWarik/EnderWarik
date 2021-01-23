@@ -1,0 +1,74 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Snake : MonoBehaviour
+{
+    public List<Transform> Tails;
+     public float BoneDist;
+     public GameObject Bone;
+     public float range = 5f, moveSpeed = 10f, turnSpeed = 140f, JumpSpeed = 10f;
+ private Transform Tra;
+
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+   Tra = GetComponent <Transform> ();
+       
+    
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+   SnakeTails(Tra.position) ;
+
+	transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
+		if(Input.GetKey(KeyCode.DownArrow))
+			transform.Translate(-Vector3.forward * moveSpeed * Time.deltaTime);
+
+		if(Input.GetKey(KeyCode.LeftArrow))
+			transform.Rotate(Vector3.up, -turnSpeed * Time.deltaTime);
+
+		if(Input.GetKey(KeyCode.RightArrow))
+		transform.Rotate(Vector3.up, turnSpeed * Time.deltaTime);
+        
+
+    }
+  
+       void SnakeTails(Vector3 New){
+        float sqrtDist= BoneDist*BoneDist;
+        Vector3 prevPos = Tra.position;
+        foreach(var bone in Tails){
+            if((bone.position-prevPos).sqrMagnitude > sqrtDist){
+                var temp =bone.position;
+                bone.position = prevPos;
+                prevPos=temp;
+            }
+            else
+            {
+                break;
+            }
+        }
+Tra.position = New;
+      }
+
+  void OnCollisionEnter(Collision f){
+print (f.gameObject.name);
+if(f.gameObject.name == "Ograda"){
+Destroy(gameObject);    
+}
+  }
+	void OnTriggerEnter(Collider other) {
+		print (other.gameObject.name);
+        if(other.gameObject.name == "Food(Clone)"){
+Destroy(other.gameObject);
+
+}
+	}
+    
+}
+
+
